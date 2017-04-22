@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import urllib
 import re
+import datetime as dt
 import matplotlib.dates as mdates
 
 def bytespdate2num(fmt, encoding='utf-8'):
@@ -17,7 +18,7 @@ def graph_data(stock):
     fig=plt.figure()
     ax1=plt.subplot2grid((1,1),(0,0))
     
-    stock_price_url = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=10y/csv'
+    stock_price_url = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=10d/csv'
     source_code = urllib.urlopen(stock_price_url).read().decode()
     stock_data = []
     split_source = source_code.split('\n')
@@ -27,11 +28,17 @@ def graph_data(stock):
             if 'values' not in line and 'labels' not in line:
                 stock_data.append(line)
 
+##    date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
+##                                                          delimiter=',',
+##                                                          unpack=True,                                                         
+##                                                          converters={0: bytespdate2num('%Y%m%d')})
+                
     date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
                                                           delimiter=',',
-                                                          unpack=True,                                                         
-                                                          converters={0: bytespdate2num('%Y%m%d')})
-
+                                                          unpack=True)                                                         
+    dateconv=np.vectorize(dt.datetime.fromtimestamp)
+    date=dateconv(date)
+    
     ax1.plot_date(date, closep,'-', label='Price',color='orange')
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
