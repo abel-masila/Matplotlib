@@ -14,6 +14,9 @@ def bytespdate2num(fmt, encoding='utf-8'):
 
 def graph_data(stock):
 
+    fig=plt.figure()
+    ax1=plt.subplot2grid((1,1),(0,0))
+    
     stock_price_url = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=10y/csv'
     source_code = urllib.urlopen(stock_price_url).read().decode()
     stock_data = []
@@ -26,24 +29,18 @@ def graph_data(stock):
 
     date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
                                                           delimiter=',',
-                                                          unpack=True,
-                                                          # %Y = full year. 2015
-                                                          # %y = partial year 15
-                                                          # %m = number month
-                                                          # %d = number day
-                                                          # %H = hours
-                                                          # %M = minutes
-                                                          # %S = seconds
-                                                          # 12-06-2014
-                                                          # %m-%d-%Y
+                                                          unpack=True,                                                         
                                                           converters={0: bytespdate2num('%Y%m%d')})
 
-    plt.plot_date(date, closep,'-', label='Price',color='orange')
- 
+    ax1.plot_date(date, closep,'-', label='Price',color='orange')
+    for label in ax1.xaxis.get_ticklabels():
+        label.set_rotation(45)
+    ax1.grid(True)
     plt.xlabel('Date')
     plt.ylabel('Price')
-    plt.title('Data from Yahoo Finance API')
+    plt.title('Data from Yahoo Finance API for TESLA')
     plt.legend()
+    plt.subplots_adjust(left=0.09,bottom=0.20,right=0.94,top=0.93,wspace=0.2,hspace=0)
     plt.show()
 
 
