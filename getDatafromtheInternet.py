@@ -18,7 +18,7 @@ def graph_data(stock):
     fig=plt.figure()
     ax1=plt.subplot2grid((1,1),(0,0))
     
-    stock_price_url = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=10d/csv'
+    stock_price_url = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=10y/csv'
     source_code = urllib.urlopen(stock_price_url).read().decode()
     stock_data = []
     split_source = source_code.split('\n')
@@ -28,27 +28,34 @@ def graph_data(stock):
             if 'values' not in line and 'labels' not in line:
                 stock_data.append(line)
 
-##    date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
-##                                                          delimiter=',',
-##                                                          unpack=True,                                                         
-##                                                          converters={0: bytespdate2num('%Y%m%d')})
-                
     date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
                                                           delimiter=',',
-                                                          unpack=True)                                                         
-    dateconv=np.vectorize(dt.datetime.fromtimestamp)
-    date=dateconv(date)
+                                                          unpack=True,                                                         
+                                                          converters={0: bytespdate2num('%Y%m%d')})
+                
+##    date, closep, highp, lowp, openp, volume = np.loadtxt(stock_data,
+##                                                          delimiter=',',
+##                                                          unpack=True)                                                         
+##    dateconv=np.vectorize(dt.datetime.fromtimestamp)
+##    date=dateconv(date)
     
     ax1.plot_date(date, closep,'-', label='Price',color='orange')
+    ax1.fill_between(date,closep,closep[0],where=(closep  > closep[0]),facecolor='purple',alpha=0.5,color='purple')
+    ax1.fill_between(date,closep,closep[0],where=(closep  < closep[0]),facecolor='blue',alpha=0.5,color='blue')
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
     ax1.grid(True)
+    ax1.xaxis.label.set_color('c')
+    ax1.yaxis.label.set_color('c')
+
+    #ax1.set_yticks([0,10,20,30,40,50,60,70,80,90,100])
+    
     plt.xlabel('Date')
     plt.ylabel('Price')
-    plt.title('Data from Yahoo Finance API for TESLA')
+    plt.title(stock)
     plt.legend()
     plt.subplots_adjust(left=0.09,bottom=0.20,right=0.94,top=0.93,wspace=0.2,hspace=0)
     plt.show()
 
 
-graph_data('TSLA')
+graph_data('EBAY')
