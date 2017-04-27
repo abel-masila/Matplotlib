@@ -41,14 +41,23 @@ def graph_data(stock):
     
     ax1.plot_date(date, closep,'-', label='Price',color='orange')
     ax1.fill_between(date,closep,closep[0],where=(closep  > closep[0]),facecolor='purple',alpha=0.5,color='purple')
+    ax1.axhline(closep[0],color='c',linewidth=3)
     ax1.fill_between(date,closep,closep[0],where=(closep  < closep[0]),facecolor='blue',alpha=0.5,color='blue')
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
     ax1.grid(True)
-    ax1.xaxis.label.set_color('c')
-    ax1.yaxis.label.set_color('c')
+    #ax1.xaxis.label.set_color('c')
+    #ax1.yaxis.label.set_color('c')
 
-    #ax1.set_yticks([0,10,20,30,40,50,60,70,80,90,100])
+
+    ax1.spines['left'].set_linewidth(5)
+
+    ax1.tick_params(axis='x',colors='#f06215')
+    
+    ax1.set_yticks([0,10,20,30,40])
+    ax1.spines['left'].set_color('c')
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_color('c')
     
     plt.xlabel('Date')
     plt.ylabel('Price')
